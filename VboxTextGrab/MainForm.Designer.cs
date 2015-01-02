@@ -90,7 +90,7 @@
             this.Controls.Add(this.richTextBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.Text = "VBoxTextGrab - (c) 2014 Michael Schierl";
+            this.Text = "VBoxTextGrab - (c) 2014, 2015 Michael Schierl";
             this.SizeChanged += new System.EventHandler(this.MainForm_SizeChanged);
             this.ResumeLayout(false);
 
