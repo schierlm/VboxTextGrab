@@ -17,6 +17,14 @@ namespace VboxTextGrab
                 if (Process.GetProcessById(pid).ProcessName.ToLowerInvariant() == "virtualbox")
                 {
                     IntPtr hwndChild = FindChild(FindChild(FindChild(hwnd, 2, 4), 0, 1), 2, 3);
+                    if (hwndChild != IntPtr.Zero && !IsWindowVisible(hwndChild))
+                    {
+                        IntPtr hwndAltChild = FindChild(FindChild(FindChild(hwnd, 2, 4), 0, 1), 0, 3);
+                        if (hwndAltChild != IntPtr.Zero && IsWindowVisible(hwndAltChild))
+                            hwndChild = hwndAltChild;
+                        else
+                            hwndChild = IntPtr.Zero;
+                    }
                     if (hwndChild != IntPtr.Zero)
                     {
                         RECT rect;
@@ -82,6 +90,9 @@ namespace VboxTextGrab
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool IsWindowVisible(IntPtr hWnd);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
