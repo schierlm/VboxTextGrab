@@ -1,7 +1,7 @@
 VBoxTextGrab
 ============
 
-(c) 2014, 2015 Michael Schierl
+(c) 2014, 2015, 2020 Michael Schierl
 
 
 Introduction

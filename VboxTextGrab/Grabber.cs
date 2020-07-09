@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -14,9 +14,10 @@ namespace VboxTextGrab
                 IntPtr hwnd = GetForegroundWindow();
                 int pid;
                 GetWindowThreadProcessId(hwnd, out pid);
+                IntPtr hwndChild = IntPtr.Zero;
                 if (Process.GetProcessById(pid).ProcessName.ToLowerInvariant() == "virtualbox")
                 {
-                    IntPtr hwndChild = FindChild(FindChild(FindChild(hwnd, 2, 4), 0, 1), 2, 3);
+                    hwndChild = FindChild(FindChild(FindChild(hwnd, 2, 4), 0, 1), 2, 3);
                     if (hwndChild != IntPtr.Zero && !IsWindowVisible(hwndChild))
                     {
                         IntPtr hwndAltChild = FindChild(FindChild(FindChild(hwnd, 2, 4), 0, 1), 0, 3);
@@ -25,19 +26,23 @@ namespace VboxTextGrab
                         else
                             hwndChild = IntPtr.Zero;
                     }
-                    if (hwndChild != IntPtr.Zero)
+                }
+                else if (Process.GetProcessById(pid).ProcessName.ToLowerInvariant() == "virtualboxvm")
+                {
+                    hwndChild = FindChild(FindChild(FindChild(hwnd, 2, 3), 0, 1), 2, 3);
+                }
+                if (hwndChild != IntPtr.Zero)
+                {
+                    RECT rect;
+                    GetWindowRect(hwndChild, out rect);
+
+                    Bitmap bitmap = new Bitmap(rect.Right - rect.Left, rect.Bottom - rect.Top);
+
+                    using (Graphics g = Graphics.FromImage(bitmap))
                     {
-                        RECT rect;
-                        GetWindowRect(hwndChild, out rect);
-
-                        Bitmap bitmap = new Bitmap(rect.Right - rect.Left, rect.Bottom - rect.Top);
-
-                        using (Graphics g = Graphics.FromImage(bitmap))
-                        {
-                            g.CopyFromScreen(new Point(rect.Left, rect.Top), Point.Empty, bitmap.Size);
-                        }
-                        return bitmap;
+                        g.CopyFromScreen(new Point(rect.Left, rect.Top), Point.Empty, bitmap.Size);
                     }
+                    return bitmap;
                 }
                 return null;
             }
